@@ -1,5 +1,5 @@
 [package]
-name = "serde_yaml"
+name = "serde-yaml"
 version = "0.9.35"
 authors = ["Christina Sørensen <christina@cafkafk.com>", "David Tolnay <dtolnay@gmail.com>"]
 categories = ["encoding", "parser-implementations"]
