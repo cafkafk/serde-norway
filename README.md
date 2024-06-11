@@ -14,7 +14,7 @@ file format. _(This project is no longer maintained.)_
 ```toml
 [dependencies]
 serde = "1.0"
-serde_yaml = "0.9"
+serde_norway = "0.9"
 ```
 
 Release notes are available under [GitHub releases].
@@ -26,23 +26,23 @@ Release notes are available under [GitHub releases].
 [API documentation is available in rustdoc form][docs.rs] but the general idea
 is:
 
-[docs.rs]: https://docs.rs/serde_yaml
+[docs.rs]: https://docs.rs/serde_norway
 
 ```rust
 use std::collections::BTreeMap;
 
-fn main() -> Result<(), serde_yaml::Error> {
+fn main() -> Result<(), serde_norway::Error> {
     // You have some type.
     let mut map = BTreeMap::new();
     map.insert("x".to_string(), 1.0);
     map.insert("y".to_string(), 2.0);
 
     // Serialize it to a YAML string.
-    let yaml = serde_yaml::to_string(&map)?;
+    let yaml = serde_norway::to_string(&map)?;
     assert_eq!(yaml, "x: 1.0\ny: 2.0\n");
 
     // Deserialize it back to a Rust type.
-    let deserialized_map: BTreeMap<String, f64> = serde_yaml::from_str(&yaml)?;
+    let deserialized_map: BTreeMap<String, f64> = serde_norway::from_str(&yaml)?;
     assert_eq!(map, deserialized_map);
     Ok(())
 }
@@ -54,7 +54,7 @@ defined in your program.
 ```toml
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
+serde_norway = "0.9"
 ```
 
 Structs serialize in the obvious way:
@@ -68,13 +68,13 @@ struct Point {
     y: f64,
 }
 
-fn main() -> Result<(), serde_yaml::Error> {
+fn main() -> Result<(), serde_norway::Error> {
     let point = Point { x: 1.0, y: 2.0 };
 
-    let yaml = serde_yaml::to_string(&point)?;
+    let yaml = serde_norway::to_string(&point)?;
     assert_eq!(yaml, "x: 1.0\ny: 2.0\n");
 
-    let deserialized_point: Point = serde_yaml::from_str(&yaml)?;
+    let deserialized_point: Point = serde_norway::from_str(&yaml)?;
     assert_eq!(point, deserialized_point);
     Ok(())
 }
@@ -93,13 +93,13 @@ enum Enum {
     Struct { x: f64, y: f64 },
 }
 
-fn main() -> Result<(), serde_yaml::Error> {
+fn main() -> Result<(), serde_norway::Error> {
     let yaml = "
         - !Newtype 1
         - !Tuple [0, 0, 0]
         - !Struct {x: 1.0, y: 2.0}
     ";
-    let values: Vec<Enum> = serde_yaml::from_str(yaml).unwrap();
+    let values: Vec<Enum> = serde_norway::from_str(yaml).unwrap();
     assert_eq!(values[0], Enum::Newtype(1));
     assert_eq!(values[1], Enum::Tuple(0, 0, 0));
     assert_eq!(values[2], Enum::Struct { x: 1.0, y: 2.0 });
@@ -114,7 +114,7 @@ fn main() -> Result<(), serde_yaml::Error> {
           x: 1.0
           y: 2.0
     ";
-    let values: Vec<Enum> = serde_yaml::from_str(yaml).unwrap();
+    let values: Vec<Enum> = serde_norway::from_str(yaml).unwrap();
     assert_eq!(values[0], Enum::Tuple(0, 0, 0));
     assert_eq!(values[1], Enum::Struct { x: 1.0, y: 2.0 });
 
@@ -123,7 +123,7 @@ fn main() -> Result<(), serde_yaml::Error> {
         - Unit  # serialization produces this one
         - !Unit
     ";
-    let values: Vec<Enum> = serde_yaml::from_str(yaml).unwrap();
+    let values: Vec<Enum> = serde_norway::from_str(yaml).unwrap();
     assert_eq!(values[0], Enum::Unit);
     assert_eq!(values[1], Enum::Unit);
 
