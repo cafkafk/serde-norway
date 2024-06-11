@@ -1,5 +1,10 @@
-Serde YAML
+<div align="center">
+
+Serde Norway, a Serde YAML fork :)
 ==========
+    
+![Flag_of_Norway svg](https://github.com/cafkafk/serde-norway/assets/89321978/ff00f477-7ae4-4665-ad66-cb0c3da88e47)
+
 
 A hard-fork of Serde YAML. I'm not committing to maintaining this long-term (yet).
 
@@ -8,6 +13,8 @@ file format. _(This project is no longer maintained.)_
 
 [Serde]: https://github.com/serde-rs/serde
 [YAML]: https://yaml.org/
+
+</div>
 
 ## Dependency
 
