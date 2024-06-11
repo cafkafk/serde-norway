@@ -1,27 +1,26 @@
 [package]
 name = "serde_yaml"
-version = "0.9.34+deprecated"
-authors = ["David Tolnay <dtolnay@gmail.com>"]
+version = "0.9.35"
+authors = ["Christina Sørensen <christina@cafkafk.com>", "David Tolnay <dtolnay@gmail.com>"]
 categories = ["encoding", "parser-implementations"]
 description = "YAML data format for Serde"
-documentation = "https://docs.rs/serde_yaml/"
 edition = "2021"
 keywords = ["yaml", "serde", "serialization"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/dtolnay/serde-yaml"
+repository = "https://github.com/cafkafk/serde-yaml"
 rust-version = "1.64"
 
 [dependencies]
 indexmap = "2.2.1"
 itoa = "1.0"
 ryu = "1.0"
-serde = "1.0.195"
+serde = "1.0.203"
 unsafe-libyaml = "0.2.11"
 
 [dev-dependencies]
 anyhow = "1.0.79"
 indoc = "2.0"
-serde_derive = "1.0.195"
+serde_derive = "1.0.203"
 
 [lib]
 doc-scrape-examples = false
