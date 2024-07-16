@@ -1,3 +1,4 @@
+#![doc(html_logo_url = "https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg")]
 //! [![github]](https://github.com/dtolnay/serde-yaml)&ensp;[![crates-io]](https://crates.io/crates/serde-yaml)&ensp;[![docs-rs]](https://docs.rs/serde-yaml)
 //!
 //! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
