@@ -14,7 +14,7 @@ rust-version = "1.64"
 indexmap = "2.2.1"
 itoa = "1.0"
 ryu = "1.0"
-serde = "1.0.203"
+serde = "1.0.206"
 unsafe-libyaml = "0.2.11"
 
 [dev-dependencies]
