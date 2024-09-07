@@ -1,14 +1,8 @@
 #![doc(html_logo_url = "https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg")]
 //! [![github]](https://github.com/dtolnay/serde-yaml)&ensp;[![crates-io]](https://crates.io/crates/serde-yaml)&ensp;[![docs-rs]](https://docs.rs/serde-yaml)
 //!
-//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
-//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust
-//! [docs-rs]: https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs
-//!
-//! <br>
-//!
 //! Rust library for using the [Serde] serialization framework with data in
-//! [YAML] file format. _(This project is no longer maintained.)_
+//! [YAML] file format.
 //!
 //! [Serde]: https://github.com/serde-rs/serde
 //! [YAML]: https://yaml.org/
@@ -116,7 +110,6 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/serde_norway/0.9.34+deprecated")]
 #![deny(missing_docs, unsafe_op_in_unsafe_fn)]
 // Suppressed clippy_pedantic lints
 #![allow(
