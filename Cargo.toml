@@ -18,7 +18,7 @@ serde = "1.0.203"
 unsafe-libyaml = "0.2.11"
 
 [dev-dependencies]
-anyhow = "1.0.79"
+anyhow = "1.0.89"
 indoc = "2.0"
 serde_derive = "1.0.203"
 
