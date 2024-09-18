@@ -10,7 +10,7 @@ A hard-fork of Serde YAML. I'm not committing to maintaining this long-term
 (yet). However, I also need it, because I'm in a platform team :)
 
 Rust library for using the [Serde] serialization framework with data in [YAML]
-file format. _(This project is no longer maintained.)_
+file format.
 
 [Serde]: https://github.com/serde-rs/serde
 [YAML]: https://yaml.org/
