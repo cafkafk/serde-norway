@@ -21,8 +21,18 @@
     };
   };
 
-  outputs = { self, nixpkgs, crane, fenix, flake-utils, advisory-db, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      crane,
+      fenix,
+      flake-utils,
+      advisory-db,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
@@ -36,23 +46,26 @@
           inherit src;
           strictDeps = true;
 
-          buildInputs = [
-            # Add additional build inputs here
-          ] ++ lib.optionals pkgs.stdenv.isDarwin [
-            # Additional darwin specific inputs can be set here
-            pkgs.libiconv
-          ];
+          buildInputs =
+            [
+              # Add additional build inputs here
+            ]
+            ++ lib.optionals pkgs.stdenv.isDarwin [
+              # Additional darwin specific inputs can be set here
+              pkgs.libiconv
+            ];
 
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";
         };
 
-        craneLibLLvmTools = craneLib.overrideToolchain
-          (fenix.packages.${system}.complete.withComponents [
+        craneLibLLvmTools = craneLib.overrideToolchain (
+          fenix.packages.${system}.complete.withComponents [
             "cargo"
             "llvm-tools"
             "rustc"
-          ]);
+          ]
+        );
 
         # Build *just* the cargo dependencies, so we can reuse
         # all of that work (e.g. via cachix) when running in CI
@@ -60,9 +73,12 @@
 
         # Build the actual crate itself, reusing the dependency
         # artifacts from above.
-        serde-yaml = craneLib.buildPackage (commonArgs // {
-          inherit cargoArtifacts;
-        });
+        serde-yaml = craneLib.buildPackage (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+          }
+        );
       in
       {
         checks = {
@@ -75,14 +91,20 @@
           # Note that this is done as a separate derivation so that
           # we can block the CI if there are issues here, but not
           # prevent downstream consumers from building our crate by itself.
-          serde-yaml-clippy = craneLib.cargoClippy (commonArgs // {
-            inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-          });
+          serde-yaml-clippy = craneLib.cargoClippy (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoClippyExtraArgs = "--all-targets -- --deny warnings -Dclippy::all -Dclippy::pedantic";
+            }
+          );
 
-          serde-yaml-doc = craneLib.cargoDoc (commonArgs // {
-            inherit cargoArtifacts;
-          });
+          serde-yaml-doc = craneLib.cargoDoc (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+            }
+          );
 
           # Check formatting
           serde-yaml-fmt = craneLib.cargoFmt {
@@ -102,20 +124,28 @@
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on `serde-yaml` if you do not want
           # the tests to run twice
-          serde-yaml-nextest = craneLib.cargoNextest (commonArgs // {
-            inherit cargoArtifacts;
-            partitions = 1;
-            partitionType = "count";
-          });
+          serde-yaml-nextest = craneLib.cargoNextest (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+              partitions = 1;
+              partitionType = "count";
+            }
+          );
         };
 
-        packages = {
-          default = serde-yaml;
-        } // lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
-          serde-yaml-llvm-coverage = craneLibLLvmTools.cargoLlvmCov (commonArgs // {
-            inherit cargoArtifacts;
-          });
-        };
+        packages =
+          {
+            default = serde-yaml;
+          }
+          // lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
+            serde-yaml-llvm-coverage = craneLibLLvmTools.cargoLlvmCov (
+              commonArgs
+              // {
+                inherit cargoArtifacts;
+              }
+            );
+          };
 
         apps.default = flake-utils.lib.mkApp {
           drv = serde-yaml;
@@ -133,5 +163,6 @@
             # pkgs.ripgrep
           ];
         };
-      });
+      }
+    );
 }
