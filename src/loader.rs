@@ -41,10 +41,7 @@ impl<'input> Loader<'input> {
     }
 
     pub fn next_document(&mut self) -> Option<Document<'input>> {
-        let parser = match &mut self.parser {
-            Some(parser) => parser,
-            None => return None,
-        };
+        let Some(parser) = &mut self.parser else { return None };
 
         let first = self.document_count == 0;
         self.document_count += 1;

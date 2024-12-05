@@ -121,10 +121,7 @@ impl<'de> Deserializer<'de> {
         }
 
         let mut loader = Loader::new(self.progress)?;
-        let document = match loader.next_document() {
-            Some(document) => document,
-            None => return Err(error::new(ErrorImpl::EndOfStream)),
-        };
+        let Some(document) = loader.next_document() else { return Err(error::new(ErrorImpl::EndOfStream)) };
         let t = f(&mut DeserializerFromEvents {
             document: &document,
             pos: &mut pos,
@@ -859,15 +856,12 @@ fn visit_scalar<'de, V>(visitor: V, scalar: &Scalar<'de>, tagged_already: bool) 
 where
     V: Visitor<'de>,
 {
-    let v = match str::from_utf8(&scalar.value) {
-        Ok(v) => v,
-        Err(_) => {
+    let Ok(v) = str::from_utf8(&scalar.value) else {
             return Err(de::Error::invalid_type(
                 Unexpected::Bytes(&scalar.value),
                 &visitor,
             ))
-        }
-    };
+        };
     if let (Some(tag), false) = (&scalar.tag, tagged_already) {
         if tag == Tag::BOOL {
             return match parse_bool(v) {
