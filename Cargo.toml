@@ -8,7 +8,7 @@ edition = "2021"
 keywords = ["yaml", "serde", "serialization"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/cafkafk/serde-yaml"
-rust-version = "1.64"
+rust-version = "1.65"
 
 [dependencies]
 indexmap = "2.2.1"
