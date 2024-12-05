@@ -7,7 +7,7 @@ use std::fmt::{self, Debug};
 use std::mem::MaybeUninit;
 use std::ptr::{addr_of_mut, NonNull};
 use std::slice;
-use unsafe_libyaml as sys;
+use unsafe_libyaml_norway as sys;
 
 pub(crate) struct Parser<'input> {
     pin: Owned<ParserPinned<'input>>,
