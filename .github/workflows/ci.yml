@@ -14,7 +14,26 @@ env:
 
 jobs:
   pre_ci:
+    needs: conventional
     uses: dtolnay/.github/.github/workflows/pre_ci.yml@master
+
+  conventional:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: webiny/action-conventional-commits@v1.3.0
+
+  security_audit:
+    needs: pre_ci
+    if: needs.pre_ci.outputs.continue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@cargo-deny
+      - name: Scan for vulnerabilities
+        run: cargo deny check advisories
 
   test:
     name: Rust ${{matrix.rust}}
@@ -55,6 +74,7 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
+    needs: conventional
     timeout-minutes: 45
     steps:
       - name: Checkout repository
@@ -107,6 +127,7 @@ jobs:
     name: Outdated
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
+    needs: conventional
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
