@@ -88,7 +88,7 @@ dependencies = [
 
 [[package]]
 name = "serde_norway"
-version = "0.9.41"
+version = "0.9.42"
 dependencies = [
  "anyhow",
  "indexmap",

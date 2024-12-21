@@ -1,6 +1,6 @@
 [package]
 name = "serde_norway"
-version = "0.9.41"
+version = "0.9.42"
 authors = ["Christina Sørensen <christina@cafkafk.com>", "David Tolnay <dtolnay@gmail.com>"]
 categories = ["encoding", "parser-implementations"]
 description = "YAML data format for Serde"
