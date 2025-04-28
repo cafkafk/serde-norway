@@ -1092,6 +1092,14 @@ pub(crate) fn digits_but_not_number(scalar: &str) -> bool {
     scalar.len() > 1 && scalar.starts_with('0') && scalar[1..].bytes().all(|b| b.is_ascii_digit())
 }
 
+pub(crate) fn is_bool_str(scalar: &str) -> bool {
+    match scalar {
+        "y" | "Y" | "yes" | "Yes" | "YES" | "on" | "On" | "ON" | "true" | "True" | "TRUE" | "n"
+        | "N" | "no" | "No" | "NO" | "off" | "Off" | "OFF" | "false" | "False" | "FALSE" => true,
+        _ => false,
+    }
+}
+
 pub(crate) fn visit_int<'de, V>(visitor: V, v: &str) -> Result<Result<V::Value>, V>
 where
     V: Visitor<'de>,

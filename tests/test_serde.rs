@@ -297,18 +297,30 @@ fn test_strings_needing_quote() {
     #[derive(Serialize, Deserialize, PartialEq, Debug)]
     struct Struct {
         boolean: String,
+        yes_scalar: String,
+        no_scalar: String,
+        on_scalar: String,
+        off_scalar: String,
         integer: String,
         void: String,
         leading_zeros: String,
     }
     let thing = Struct {
         boolean: "true".to_owned(),
+        yes_scalar: "yes".to_owned(),
+        no_scalar: "no".to_owned(),
+        on_scalar: "on".to_owned(),
+        off_scalar: "off".to_owned(),
         integer: "1".to_owned(),
         void: "null".to_owned(),
         leading_zeros: "007".to_owned(),
     };
     let yaml = indoc! {"
         boolean: 'true'
+        yes_scalar: 'yes'
+        no_scalar: 'no'
+        on_scalar: 'on'
+        off_scalar: 'off'
         integer: '1'
         void: 'null'
         leading_zeros: '007'

@@ -342,6 +342,8 @@ where
             fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> {
                 Ok(if crate::de::digits_but_not_number(v) {
                     ScalarStyle::SingleQuoted
+                } else if crate::de::is_bool_str(v) {
+                    ScalarStyle::SingleQuoted
                 } else {
                     ScalarStyle::Any
                 })
