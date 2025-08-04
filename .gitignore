@@ -1,4 +1,6 @@
 target
 result
 
+/.env
+
 .direnv/*
