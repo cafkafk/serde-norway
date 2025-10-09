@@ -9,8 +9,8 @@ mod ser;
 pub(crate) mod tagged;
 
 use crate::error::{self, Error, ErrorImpl};
-use serde::de::{Deserialize, DeserializeOwned, IntoDeserializer};
-use serde::Serialize;
+use serde_core::de::{Deserialize, DeserializeOwned, IntoDeserializer};
+use serde_core::Serialize;
 use std::hash::{Hash, Hasher};
 use std::mem;
 

@@ -74,11 +74,11 @@
 /// ```
 pub mod singleton_map {
     use crate::value::{Mapping, Sequence, Value};
-    use serde::de::{
+    use serde_core::de::{
         self, Deserialize, DeserializeSeed, Deserializer, EnumAccess, IgnoredAny, MapAccess,
         Unexpected, VariantAccess, Visitor,
     };
-    use serde::ser::{
+    use serde_core::ser::{
         self, Serialize, SerializeMap, SerializeStructVariant, SerializeTupleVariant, Serializer,
     };
     use std::fmt::{self, Display};
@@ -934,11 +934,11 @@ pub mod singleton_map {
 /// ```
 pub mod singleton_map_recursive {
     use crate::value::{Mapping, Sequence, Value};
-    use serde::de::{
+    use serde_core::de::{
         self, Deserialize, DeserializeSeed, Deserializer, EnumAccess, IgnoredAny, MapAccess,
         SeqAccess, Unexpected, VariantAccess, Visitor,
     };
-    use serde::ser::{
+    use serde_core::ser::{
         self, Serialize, SerializeMap, SerializeSeq, SerializeStruct, SerializeStructVariant,
         SerializeTuple, SerializeTupleStruct, SerializeTupleVariant, Serializer,
     };

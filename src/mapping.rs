@@ -2,7 +2,7 @@
 
 use crate::{private, Value};
 use indexmap::IndexMap;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde_core::{Deserialize, Deserializer, Serialize};
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::{self, Display};
@@ -772,8 +772,8 @@ impl<'a> VacantEntry<'a> {
 
 impl Serialize for Mapping {
     #[inline]
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        use serde::ser::SerializeMap;
+    fn serialize<S: serde_core::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde_core::ser::SerializeMap;
         let mut map_serializer = serializer.serialize_map(Some(self.len()))?;
         for (k, v) in self {
             map_serializer.serialize_entry(k, v)?;
@@ -789,7 +789,7 @@ impl<'de> Deserialize<'de> for Mapping {
     {
         struct Visitor;
 
-        impl<'de> serde::de::Visitor<'de> for Visitor {
+        impl<'de> serde_core::de::Visitor<'de> for Visitor {
             type Value = Mapping;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -799,7 +799,7 @@ impl<'de> Deserialize<'de> for Mapping {
             #[inline]
             fn visit_unit<E>(self) -> Result<Self::Value, E>
             where
-                E: serde::de::Error,
+                E: serde_core::de::Error,
             {
                 Ok(Mapping::new())
             }
@@ -807,14 +807,14 @@ impl<'de> Deserialize<'de> for Mapping {
             #[inline]
             fn visit_map<A>(self, mut data: A) -> Result<Self::Value, A::Error>
             where
-                A: serde::de::MapAccess<'de>,
+                A: serde_core::de::MapAccess<'de>,
             {
                 let mut mapping = Mapping::new();
 
                 while let Some(key) = data.next_key()? {
                     match mapping.entry(key) {
                         Entry::Occupied(entry) => {
-                            return Err(serde::de::Error::custom(DuplicateKeyError { entry }));
+                            return Err(serde_core::de::Error::custom(DuplicateKeyError { entry }));
                         }
                         Entry::Vacant(entry) => {
                             let value = data.next_value()?;

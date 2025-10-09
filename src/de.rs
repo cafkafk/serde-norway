@@ -4,8 +4,8 @@ use crate::libyaml::parser::{MappingStart, Scalar, ScalarStyle, SequenceStart};
 use crate::libyaml::tag::Tag;
 use crate::loader::{Document, Loader};
 use crate::path::Path;
-use serde::de::value::StrDeserializer;
-use serde::de::{
+use serde_core::de::value::StrDeserializer;
+use serde_core::de::{
     self, Deserialize, DeserializeOwned, DeserializeSeed, Expected, IgnoredAny, Unexpected, Visitor,
 };
 use std::fmt;

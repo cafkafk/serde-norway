@@ -1,6 +1,6 @@
 use crate::libyaml::{emitter, error as libyaml};
 use crate::path::Path;
-use serde::{de, ser};
+use serde_core::{de, ser};
 use std::error::Error as StdError;
 use std::fmt::{self, Debug, Display};
 use std::io;
