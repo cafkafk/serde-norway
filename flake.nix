@@ -4,7 +4,6 @@
 
     crane = {
       url = "github:ipetkov/crane";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     fenix = {
@@ -21,19 +20,17 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      crane,
-      fenix,
-      flake-utils,
-      advisory-db,
-      ...
-    }:
+  outputs = {
+    self,
+    nixpkgs,
+    crane,
+    fenix,
+    flake-utils,
+    advisory-db,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (
-      system:
-      let
+      system: let
         pkgs = nixpkgs.legacyPackages.${system};
 
         inherit (pkgs) lib;
@@ -69,18 +66,17 @@
 
         # Build *just* the cargo dependencies, so we can reuse
         # all of that work (e.g. via cachix) when running in CI
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+        cargoArtifacts = craneLibLLvmTools.buildDepsOnly commonArgs;
 
         # Build the actual crate itself, reusing the dependency
         # artifacts from above.
-        serde-yaml = craneLib.buildPackage (
+        serde-yaml = craneLibLLvmTools.buildPackage (
           commonArgs
           // {
             inherit cargoArtifacts;
           }
         );
-      in
-      {
+      in {
         checks = {
           # Build the crate as part of `nix flake check` for convenience
           inherit serde-yaml;
@@ -91,7 +87,7 @@
           # Note that this is done as a separate derivation so that
           # we can block the CI if there are issues here, but not
           # prevent downstream consumers from building our crate by itself.
-          serde-yaml-clippy = craneLib.cargoClippy (
+          serde-yaml-clippy = craneLibLLvmTools.cargoClippy (
             commonArgs
             // {
               inherit cargoArtifacts;
@@ -99,7 +95,7 @@
             }
           );
 
-          serde-yaml-doc = craneLib.cargoDoc (
+          serde-yaml-doc = craneLibLLvmTools.cargoDoc (
             commonArgs
             // {
               inherit cargoArtifacts;
@@ -107,24 +103,24 @@
           );
 
           # Check formatting
-          serde-yaml-fmt = craneLib.cargoFmt {
+          serde-yaml-fmt = craneLibLLvmTools.cargoFmt {
             inherit src;
           };
 
           # Audit dependencies
-          serde-yaml-audit = craneLib.cargoAudit {
+          serde-yaml-audit = craneLibLLvmTools.cargoAudit {
             inherit src advisory-db;
           };
 
           # Audit licenses
-          serde-yaml-deny = craneLib.cargoDeny {
+          serde-yaml-deny = craneLibLLvmTools.cargoDeny {
             inherit src;
           };
 
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on `serde-yaml` if you do not want
           # the tests to run twice
-          serde-yaml-nextest = craneLib.cargoNextest (
+          serde-yaml-nextest = craneLibLLvmTools.cargoNextest (
             commonArgs
             // {
               inherit cargoArtifacts;
