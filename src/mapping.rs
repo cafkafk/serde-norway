@@ -266,7 +266,7 @@ pub trait Index: private::Sealed {
 
 struct HashLikeValue<'a>(&'a str);
 
-impl<'a> indexmap::Equivalent<Value> for HashLikeValue<'a> {
+impl indexmap::Equivalent<Value> for HashLikeValue<'_> {
     fn equivalent(&self, key: &Value) -> bool {
         match key {
             Value::String(string) => self.0 == string,
@@ -276,7 +276,7 @@ impl<'a> indexmap::Equivalent<Value> for HashLikeValue<'a> {
 }
 
 // NOTE: This impl must be consistent with Value's Hash impl.
-impl<'a> Hash for HashLikeValue<'a> {
+impl Hash for HashLikeValue<'_> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         const STRING: Value = Value::String(String::new());
         mem::discriminant(&STRING).hash(state);
@@ -451,20 +451,16 @@ impl PartialOrd for Mapping {
             let mut other = other.into_iter();
 
             loop {
-                let x = match this.next() {
-                    None => {
-                        if other.next().is_none() {
-                            return Ordering::Equal;
-                        } else {
-                            return Ordering::Less;
-                        }
+                let Some(x) = this.next() else {
+                    if other.next().is_none() {
+                        return Ordering::Equal;
+                    } else {
+                        return Ordering::Less;
                     }
-                    Some(val) => val,
                 };
 
-                let y = match other.next() {
-                    None => return Ordering::Greater,
-                    Some(val) => val,
+                let Some(y) = other.next() else {
+                    return Ordering::Greater;
                 };
 
                 match cmp(x, y) {
@@ -835,7 +831,7 @@ struct DuplicateKeyError<'a> {
     entry: OccupiedEntry<'a>,
 }
 
-impl<'a> Display for DuplicateKeyError<'a> {
+impl Display for DuplicateKeyError<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("duplicate entry ")?;
         match self.entry.key() {
