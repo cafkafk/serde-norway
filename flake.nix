@@ -61,6 +61,7 @@
             "cargo"
             "llvm-tools"
             "rustc"
+            "clippy"
           ]
         );
 
