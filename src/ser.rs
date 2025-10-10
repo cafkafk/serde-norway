@@ -6,8 +6,8 @@ use crate::error::{self, Error, ErrorImpl};
 use crate::libyaml;
 use crate::libyaml::emitter::{Emitter, Event, Mapping, Scalar, ScalarStyle, Sequence};
 use crate::value::tagged::{self, MaybeTag};
-use serde::de::Visitor;
-use serde::ser::{self, Serializer as _};
+use serde_core::de::Visitor;
+use serde_core::ser::{self, Serializer as _};
 use std::fmt::{self, Display};
 use std::io;
 use std::marker::PhantomData;
@@ -166,7 +166,7 @@ where
     }
 }
 
-impl<'a, W> ser::Serializer for &'a mut Serializer<W>
+impl<W> ser::Serializer for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -308,7 +308,7 @@ where
     fn serialize_str(self, value: &str) -> Result<()> {
         struct InferScalarStyle;
 
-        impl<'de> Visitor<'de> for InferScalarStyle {
+        impl Visitor<'_> for InferScalarStyle {
             type Value = ScalarStyle;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -523,7 +523,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeSeq for &'a mut Serializer<W>
+impl<W> ser::SerializeSeq for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -542,7 +542,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeTuple for &'a mut Serializer<W>
+impl<W> ser::SerializeTuple for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -561,7 +561,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeTupleStruct for &'a mut Serializer<W>
+impl<W> ser::SerializeTupleStruct for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -580,7 +580,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeTupleVariant for &'a mut Serializer<W>
+impl<W> ser::SerializeTupleVariant for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -599,7 +599,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeMap for &'a mut Serializer<W>
+impl<W> ser::SerializeMap for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -647,7 +647,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeStruct for &'a mut Serializer<W>
+impl<W> ser::SerializeStruct for &mut Serializer<W>
 where
     W: io::Write,
 {
@@ -667,7 +667,7 @@ where
     }
 }
 
-impl<'a, W> ser::SerializeStructVariant for &'a mut Serializer<W>
+impl<W> ser::SerializeStructVariant for &mut Serializer<W>
 where
     W: io::Write,
 {

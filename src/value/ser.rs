@@ -1,7 +1,7 @@
 use crate::error::{self, Error, ErrorImpl};
 use crate::value::tagged::{self, MaybeTag};
 use crate::value::{to_value, Mapping, Number, Sequence, Tag, TaggedValue, Value};
-use serde::ser::{self, Serialize};
+use serde_core::ser::{self, Serialize};
 use std::fmt::Display;
 use std::mem;
 
@@ -10,7 +10,7 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 impl Serialize for Value {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: serde_core::Serializer,
     {
         match self {
             Value::Null => serializer.serialize_unit(),
@@ -19,7 +19,7 @@ impl Serialize for Value {
             Value::String(s) => serializer.serialize_str(s),
             Value::Sequence(seq) => seq.serialize(serializer),
             Value::Mapping(mapping) => {
-                use serde::ser::SerializeMap;
+                use serde_core::ser::SerializeMap;
                 let mut map = serializer.serialize_map(Some(mapping.len()))?;
                 for (k, v) in mapping {
                     map.serialize_entry(k, v)?;

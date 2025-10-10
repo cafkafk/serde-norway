@@ -2,7 +2,7 @@
 
 use crate::{private, Value};
 use indexmap::IndexMap;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde_core::{Deserialize, Deserializer, Serialize};
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::{self, Display};
@@ -78,7 +78,7 @@ impl Mapping {
     /// Gets the given key's corresponding entry in the map for insertion and/or
     /// in-place manipulation.
     #[inline]
-    pub fn entry(&mut self, k: Value) -> Entry {
+    pub fn entry(&mut self, k: Value) -> Entry<'_> {
         match self.map.entry(k) {
             indexmap::map::Entry::Occupied(occupied) => Entry::Occupied(OccupiedEntry { occupied }),
             indexmap::map::Entry::Vacant(vacant) => Entry::Vacant(VacantEntry { vacant }),
@@ -185,7 +185,7 @@ impl Mapping {
     /// Returns a double-ended iterator visiting all key-value pairs in order of
     /// insertion. Iterator element type is `(&'a Value, &'a Value)`.
     #[inline]
-    pub fn iter(&self) -> Iter {
+    pub fn iter(&self) -> Iter<'_> {
         Iter {
             iter: self.map.iter(),
         }
@@ -194,14 +194,14 @@ impl Mapping {
     /// Returns a double-ended iterator visiting all key-value pairs in order of
     /// insertion. Iterator element type is `(&'a Value, &'a mut ValuE)`.
     #[inline]
-    pub fn iter_mut(&mut self) -> IterMut {
+    pub fn iter_mut(&mut self) -> IterMut<'_> {
         IterMut {
             iter: self.map.iter_mut(),
         }
     }
 
     /// Return an iterator over the keys of the map.
-    pub fn keys(&self) -> Keys {
+    pub fn keys(&self) -> Keys<'_> {
         Keys {
             iter: self.map.keys(),
         }
@@ -215,14 +215,14 @@ impl Mapping {
     }
 
     /// Return an iterator over the values of the map.
-    pub fn values(&self) -> Values {
+    pub fn values(&self) -> Values<'_> {
         Values {
             iter: self.map.values(),
         }
     }
 
     /// Return an iterator over mutable references to the values of the map.
-    pub fn values_mut(&mut self) -> ValuesMut {
+    pub fn values_mut(&mut self) -> ValuesMut<'_> {
         ValuesMut {
             iter: self.map.values_mut(),
         }
@@ -266,7 +266,7 @@ pub trait Index: private::Sealed {
 
 struct HashLikeValue<'a>(&'a str);
 
-impl<'a> indexmap::Equivalent<Value> for HashLikeValue<'a> {
+impl indexmap::Equivalent<Value> for HashLikeValue<'_> {
     fn equivalent(&self, key: &Value) -> bool {
         match key {
             Value::String(string) => self.0 == string,
@@ -276,7 +276,7 @@ impl<'a> indexmap::Equivalent<Value> for HashLikeValue<'a> {
 }
 
 // NOTE: This impl must be consistent with Value's Hash impl.
-impl<'a> Hash for HashLikeValue<'a> {
+impl Hash for HashLikeValue<'_> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         const STRING: Value = Value::String(String::new());
         mem::discriminant(&STRING).hash(state);
@@ -451,20 +451,16 @@ impl PartialOrd for Mapping {
             let mut other = other.into_iter();
 
             loop {
-                let x = match this.next() {
-                    None => {
-                        if other.next().is_none() {
-                            return Ordering::Equal;
-                        } else {
-                            return Ordering::Less;
-                        }
+                let Some(x) = this.next() else {
+                    if other.next().is_none() {
+                        return Ordering::Equal;
+                    } else {
+                        return Ordering::Less;
                     }
-                    Some(val) => val,
                 };
 
-                let y = match other.next() {
-                    None => return Ordering::Greater,
-                    Some(val) => val,
+                let Some(y) = other.next() else {
+                    return Ordering::Greater;
                 };
 
                 match cmp(x, y) {
@@ -772,8 +768,8 @@ impl<'a> VacantEntry<'a> {
 
 impl Serialize for Mapping {
     #[inline]
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        use serde::ser::SerializeMap;
+    fn serialize<S: serde_core::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde_core::ser::SerializeMap;
         let mut map_serializer = serializer.serialize_map(Some(self.len()))?;
         for (k, v) in self {
             map_serializer.serialize_entry(k, v)?;
@@ -789,7 +785,7 @@ impl<'de> Deserialize<'de> for Mapping {
     {
         struct Visitor;
 
-        impl<'de> serde::de::Visitor<'de> for Visitor {
+        impl<'de> serde_core::de::Visitor<'de> for Visitor {
             type Value = Mapping;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -799,7 +795,7 @@ impl<'de> Deserialize<'de> for Mapping {
             #[inline]
             fn visit_unit<E>(self) -> Result<Self::Value, E>
             where
-                E: serde::de::Error,
+                E: serde_core::de::Error,
             {
                 Ok(Mapping::new())
             }
@@ -807,14 +803,14 @@ impl<'de> Deserialize<'de> for Mapping {
             #[inline]
             fn visit_map<A>(self, mut data: A) -> Result<Self::Value, A::Error>
             where
-                A: serde::de::MapAccess<'de>,
+                A: serde_core::de::MapAccess<'de>,
             {
                 let mut mapping = Mapping::new();
 
                 while let Some(key) = data.next_key()? {
                     match mapping.entry(key) {
                         Entry::Occupied(entry) => {
-                            return Err(serde::de::Error::custom(DuplicateKeyError { entry }));
+                            return Err(serde_core::de::Error::custom(DuplicateKeyError { entry }));
                         }
                         Entry::Vacant(entry) => {
                             let value = data.next_value()?;
@@ -835,7 +831,7 @@ struct DuplicateKeyError<'a> {
     entry: OccupiedEntry<'a>,
 }
 
-impl<'a> Display for DuplicateKeyError<'a> {
+impl Display for DuplicateKeyError<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("duplicate entry ")?;
         match self.entry.key() {

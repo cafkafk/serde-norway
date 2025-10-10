@@ -1,12 +1,12 @@
 use crate::value::de::{MapDeserializer, MapRefDeserializer, SeqDeserializer, SeqRefDeserializer};
 use crate::value::Value;
 use crate::Error;
-use serde::de::value::{BorrowedStrDeserializer, StrDeserializer};
-use serde::de::{
+use serde_core::de::value::{BorrowedStrDeserializer, StrDeserializer};
+use serde_core::de::{
     Deserialize, DeserializeSeed, Deserializer, EnumAccess, Error as _, VariantAccess, Visitor,
 };
-use serde::forward_to_deserialize_any;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde_core::forward_to_deserialize_any;
+use serde_core::ser::{Serialize, SerializeMap, Serializer};
 use std::cmp::Ordering;
 use std::fmt::{self, Debug, Display};
 use std::hash::{Hash, Hasher};
@@ -178,7 +178,7 @@ impl Serialize for TaggedValue {
     {
         struct SerializeTag<'a>(&'a Tag);
 
-        impl<'a> Serialize for SerializeTag<'a> {
+        impl Serialize for SerializeTag<'_> {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
                 S: Serializer,
@@ -382,7 +382,7 @@ impl<'de> VariantAccess<'de> for &'de Value {
 
 pub(crate) struct TagStringVisitor;
 
-impl<'de> Visitor<'de> for TagStringVisitor {
+impl Visitor<'_> for TagStringVisitor {
     type Value = Tag;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -391,14 +391,14 @@ impl<'de> Visitor<'de> for TagStringVisitor {
 
     fn visit_str<E>(self, string: &str) -> Result<Self::Value, E>
     where
-        E: serde::de::Error,
+        E: serde_core::de::Error,
     {
         self.visit_string(string.to_owned())
     }
 
     fn visit_string<E>(self, string: String) -> Result<Self::Value, E>
     where
-        E: serde::de::Error,
+        E: serde_core::de::Error,
     {
         if string.is_empty() {
             return Err(E::custom("empty YAML tag is not allowed"));

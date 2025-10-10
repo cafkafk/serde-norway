@@ -1,7 +1,7 @@
 use crate::de;
 use crate::error::{self, Error, ErrorImpl};
-use serde::de::{Unexpected, Visitor};
-use serde::{forward_to_deserialize_any, Deserialize, Deserializer, Serialize, Serializer};
+use serde_core::de::{Unexpected, Visitor};
+use serde_core::{forward_to_deserialize_any, Deserialize, Deserializer, Serialize, Serializer};
 use std::cmp::Ordering;
 use std::fmt::{self, Display};
 use std::hash::{Hash, Hasher};
@@ -409,7 +409,7 @@ impl Serialize for Number {
 
 struct NumberVisitor;
 
-impl<'de> Visitor<'de> for NumberVisitor {
+impl Visitor<'_> for NumberVisitor {
     type Value = Number;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -464,7 +464,7 @@ impl<'de> Deserializer<'de> for Number {
     }
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a Number {
+impl<'de> Deserializer<'de> for &Number {
     type Error = Error;
 
     #[inline]
@@ -552,7 +552,7 @@ impl Hash for Number {
     }
 }
 
-pub(crate) fn unexpected(number: &Number) -> Unexpected {
+pub(crate) fn unexpected(number: &Number) -> Unexpected<'_> {
     match number.n {
         N::PosInt(u) => Unexpected::Unsigned(u),
         N::NegInt(i) => Unexpected::Signed(i),

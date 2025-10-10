@@ -1,12 +1,12 @@
 use crate::value::tagged::{self, TagStringVisitor};
 use crate::value::TaggedValue;
 use crate::{number, Error, Mapping, Sequence, Value};
-use serde::de::value::{BorrowedStrDeserializer, StrDeserializer};
-use serde::de::{
+use serde_core::de::value::{BorrowedStrDeserializer, StrDeserializer};
+use serde_core::de::{
     self, Deserialize, DeserializeSeed, Deserializer, EnumAccess, Error as _, Expected, MapAccess,
     SeqAccess, Unexpected, VariantAccess, Visitor,
 };
-use serde::forward_to_deserialize_any;
+use serde_core::forward_to_deserialize_any;
 use std::fmt;
 use std::slice;
 use std::vec;
@@ -92,7 +92,7 @@ impl<'de> Deserialize<'de> for Value {
             where
                 A: SeqAccess<'de>,
             {
-                let de = serde::de::value::SeqAccessDeserializer::new(data);
+                let de = serde_core::de::value::SeqAccessDeserializer::new(data);
                 let sequence = Sequence::deserialize(de)?;
                 Ok(Value::Sequence(sequence))
             }
@@ -101,7 +101,7 @@ impl<'de> Deserialize<'de> for Value {
             where
                 A: MapAccess<'de>,
             {
-                let de = serde::de::value::MapAccessDeserializer::new(data);
+                let de = serde_core::de::value::MapAccessDeserializer::new(data);
                 let mapping = Mapping::deserialize(de)?;
                 Ok(Value::Mapping(mapping))
             }
@@ -492,7 +492,7 @@ struct EnumDeserializer<'a> {
     value: Option<Value>,
 }
 
-impl<'a, 'de> EnumAccess<'de> for EnumDeserializer<'a> {
+impl<'de> EnumAccess<'de> for EnumDeserializer<'_> {
     type Error = Error;
     type Variant = VariantDeserializer;
 
@@ -1228,7 +1228,7 @@ impl Value {
     }
 
     #[cold]
-    pub(crate) fn unexpected(&self) -> Unexpected {
+    pub(crate) fn unexpected(&self) -> Unexpected<'_> {
         match self {
             Value::Null => Unexpected::Unit,
             Value::Bool(b) => Unexpected::Bool(*b),
