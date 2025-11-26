@@ -26,7 +26,7 @@ serde_norway = "0.9"
 
 Release notes are available under [GitHub releases].
 
-[GitHub releases]: https://github.com/dtolnay/serde-yaml/releases
+[GitHub releases]: https://github.com/cafkafk/serde-norway/releases
 
 ## Using Serde YAML
 
